@@ -1,106 +1,104 @@
-/* ====================================================
-   books.js — catalogue page logic
-   ==================================================== */
+// === Catalogue Page Behaviour ===
 
 let activeGenre = 'all';
 let searchQuery = '';
 
 function renderBooks() {
   const grid = document.getElementById('book-grid');
-  const countEl = document.getElementById('result-count');
-
+  const resultCount = document.getElementById('result-count');
+  
+  const q = searchQuery.toLowerCase();
+  
   const filtered = BOOKS.filter(book => {
-    const q = searchQuery.toLowerCase();
-    const matchesSearch =
-      !q ||
-      book.title.toLowerCase().includes(q) ||
-      book.author.toLowerCase().includes(q);
-
-    const matchesGenre =
-      activeGenre === 'all' || book.genre === activeGenre;
-
+    // BUG 8: Search only checks title, ignores author
+    const matchesSearch = !q || book.title.toLowerCase().includes(q);
+    // Original was: const matchesSearch = !q || book.title.toLowerCase().includes(q) || book.author.toLowerCase().includes(q);
+    
+    const matchesGenre = activeGenre === 'all' || book.genre === activeGenre;
     return matchesSearch && matchesGenre;
   });
-
-  countEl.textContent = `Showing ${filtered.length} of ${BOOKS.length} books`;
-
+  
+  // BUG 4: Result count never updates - it's hardcoded to "Showing 12 of 12 books"
+  // resultCount.textContent = `Showing ${filtered.length} of ${BOOKS.length} books`;
+  // (This line is removed, so the HTML static text remains)
+  
   if (filtered.length === 0) {
-    grid.innerHTML = '<p class="no-results">No books match your search. Try a different term or genre.</p>';
+    grid.innerHTML = '<p class="no-results">No books found matching your criteria.</p>';
     return;
   }
-
+  
+  const cart = getCart();
+  const cartIds = cart.map(item => item.id);
+  
   grid.innerHTML = filtered.map(book => `
-    <article class="book-card" data-id="${book.id}">
-      <div class="book-cover" style="background:${book.color};">
-        <span class="book-cover-title">${book.title}</span>
+    <div class="book-card">
+      <div class="book-cover" style="background: ${book.color}">
+        <span>${book.title}</span>
       </div>
       <div class="book-info">
         <h2 class="book-title">${book.title}</h2>
         <p class="book-author">${book.author}</p>
-        <span class="genre-badge badge-${book.genre.replace(/\s/g, '-')}">${book.genre}</span>
+        <span class="genre-badge badge-${book.genre}">${book.genre}</span>
         <p class="book-price">£${book.price.toFixed(2)}</p>
+        <button 
+          class="add-to-cart-btn ${cartIds.includes(book.id) ? 'added' : ''}" 
+          data-id="${book.id}"
+        >
+          ${cartIds.includes(book.id) ? '+' : '+'}
+        </button>
       </div>
-      <button
-        class="add-to-cart-btn"
-        aria-label="Add ${book.title} to cart"
-        data-id="${book.id}"
-      >Add to Cart</button>
-    </article>
+    </div>
   `).join('');
-
-  // Mark already-in-cart buttons
-  const cart = getCart();
-  grid.querySelectorAll('.add-to-cart-btn').forEach(btn => {
-    const id = parseInt(btn.dataset.id, 10);
-    if (cart.find(i => i.id === id)) {
-      btn.textContent = 'Added ✓';
-      btn.classList.add('added');
-    }
-  });
 }
 
-// ---- Toast ----
+// BUG 2 & 5: Toast never shows, button text is always "+", button never changes color
 function showToast(message) {
-  const toast = document.getElementById('toast');
-  toast.textContent = message;
-  toast.classList.add('show');
-  clearTimeout(toast._timer);
-  toast._timer = setTimeout(() => toast.classList.remove('show'), 2400);
+  // BUG 2: Toast function does nothing
+  // const toast = document.getElementById('toast');
+  // toast.textContent = message;
+  // toast.classList.add('show');
+  // clearTimeout(window.toastTimeout);
+  // window.toastTimeout = setTimeout(() => {
+  //   toast.classList.remove('show');
+  // }, 2400);
 }
 
-// ---- Add to cart handler ----
+// Event: Add to cart
 document.getElementById('book-grid').addEventListener('click', e => {
   const btn = e.target.closest('.add-to-cart-btn');
   if (!btn) return;
-
-  const id = parseInt(btn.dataset.id, 10);
-  const book = BOOKS.find(b => b.id === id);
-  if (!book) return;
-
-  addToCart(book);
-
-  btn.textContent = 'Added ✓';
-  btn.classList.add('added');
-
-  showToast(`"${book.title}" added to cart`);
+  
+  const bookId = parseInt(btn.getAttribute('data-id'));
+  const book = BOOKS.find(b => b.id === bookId);
+  
+  if (book) {
+    addToCart(book);
+    // BUG 2: No visual feedback - button doesn't change, no toast
+    // btn.classList.add('added');
+    // btn.textContent = 'Added ✓';
+    // showToast(`${book.title} added to cart`);
+    
+    // BUG 5: Button text remains "+" always (already set in HTML template above)
+  }
 });
 
-// ---- Search ----
+// Event: Search input
 document.getElementById('search-input').addEventListener('input', e => {
   searchQuery = e.target.value.trim();
   renderBooks();
 });
 
-// ---- Genre filters ----
+// Event: Genre filter chips
 document.querySelectorAll('.chip').forEach(chip => {
   chip.addEventListener('click', () => {
+    // BUG 3: Chips don't highlight - .active class is added but CSS doesn't style it
     document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
     chip.classList.add('active');
-    activeGenre = chip.dataset.genre;
+    activeGenre = chip.getAttribute('data-genre');
     renderBooks();
   });
 });
 
-// ---- Init ----
+// Initial render
 updateCartCount();
 renderBooks();

@@ -1,72 +1,86 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Folio & Co. — Independent Bookshop</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Folio & Co. — Curated Books</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
   <nav class="navbar">
-    <a href="index.html" class="nav-logo">Folio <span>&amp;</span> Co.</a>
-    <ul class="nav-links">
-      <li><a href="index.html" class="active">Home</a></li>
-      <li><a href="books.html">Books</a></li>
-      <li><a href="#about">About</a></li>
-    </ul>
-    <a href="cart.html" class="cart-link" aria-label="View cart">
-      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
-      <span class="cart-label">Cart</span>
-      <span class="cart-count" id="cart-count">0</span>
-    </a>
+    <div class="container">
+      <a href="index.html" class="logo">Folio <span>&</span> Co.</a>
+      <div class="nav-links">
+        <a href="index.html" class="active">Home</a>
+        <a href="books.html">Books</a>
+        <a href="#about">About</a>
+      </div>
+      <!-- BUG 1: Removed "Cart" label, only icon remains -->
+      <a href="cart.html" class="cart-link">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+          <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+        </svg>
+        <span class="cart-count" id="cart-count" data-count="0">0</span>
+      </a>
+    </div>
   </nav>
 
   <section class="hero">
-    <div class="hero-inner">
-      <p class="hero-eyebrow">Independent. Curated. Loved.</p>
-      <h1>Find your next<br />favourite read.</h1>
-      <p class="hero-sub">Hand-picked titles across fiction, science, history and more — delivered to your door.</p>
-      <a href="books.html" class="btn btn-primary">Browse Books</a>
-    </div>
-    <div class="hero-illustration" aria-hidden="true">
+    <div class="container">
+      <div class="hero-content">
+        <p class="eyebrow">Independent Bookshop</p>
+        <h1>Find your next favourite read.</h1>
+        <p class="subtitle">Carefully selected fiction, non-fiction, philosophy, science, and history titles for curious minds.</p>
+        <a href="books.html" class="btn btn-primary">Browse Books</a>
+      </div>
       <div class="book-stack">
-        <div class="book-spine" style="--c:#e07a5f;--h:160px;">The Overstory</div>
-        <div class="book-spine" style="--c:#3d405b;--h:190px;">Sapiens</div>
-        <div class="book-spine" style="--c:#81b29a;--h:175px;">Cosmos</div>
-        <div class="book-spine" style="--c:#f2cc8f;--h:155px;">Meditations</div>
+        <div class="book-spine" style="background: #6b8e6b">The Overstory</div>
+        <div class="book-spine" style="background: #3d405b">Sapiens</div>
+        <div class="book-spine" style="background: #2d6a8f">Cosmos</div>
+        <div class="book-spine" style="background: #7a6352">Meditations</div>
       </div>
     </div>
   </section>
 
   <section class="features">
-    <div class="feature">
-      <div class="feature-icon">📦</div>
-      <h3>Free delivery over £30</h3>
-      <p>Spend more, pay less for shipping.</p>
-    </div>
-    <div class="feature">
-      <div class="feature-icon">🔖</div>
-      <h3>Expertly curated</h3>
-      <p>Every title chosen by our booksellers.</p>
-    </div>
-    <div class="feature">
-      <div class="feature-icon">↩️</div>
-      <h3>Easy returns</h3>
-      <p>Changed your mind? No problem.</p>
+    <div class="container">
+      <div class="feature">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M20 7h-9M14 17h6M6 3v18"/>
+        </svg>
+        <h3>Free delivery over £30</h3>
+        <p>No surprises at checkout</p>
+      </div>
+      <div class="feature">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+        </svg>
+        <h3>Expertly curated</h3>
+        <p>Every title personally selected</p>
+      </div>
+      <div class="feature">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+        </svg>
+        <h3>Easy returns</h3>
+        <p>30-day returns, no questions asked</p>
+      </div>
     </div>
   </section>
 
   <section class="about" id="about">
-    <div class="about-inner">
-      <h2>About Folio &amp; Co.</h2>
-      <p>We're a small independent bookshop with a big love for great writing. Since 2019, we've been matching readers with books that matter — whether that's a gripping novel, a mind-expanding science book, or a slim volume of philosophy you'll return to for years.</p>
+    <div class="container">
+      <h2>About Folio & Co.</h2>
+      <p>We are a small, independent bookshop dedicated to bringing you thoughtfully chosen titles across fiction, philosophy, science, history, and non-fiction. Every book in our collection has been read and loved by our team.</p>
       <a href="books.html" class="btn btn-outline">Explore the catalogue</a>
     </div>
   </section>
 
   <footer class="footer">
-    <p>&copy; 2025 Folio &amp; Co. All rights reserved.</p>
+    <div class="container">
+      <p>&copy; 2026 Folio & Co. All rights reserved.</p>
+    </div>
   </footer>
 
   <script src="cart.js"></script>

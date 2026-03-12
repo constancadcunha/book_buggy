@@ -1,88 +1,89 @@
-/* ====================================================
-   cart-page.js — cart page rendering & interactions
-   ==================================================== */
-
-const DELIVERY = 2.99;
-
-function fmt(n) {
-  return '£' + n.toFixed(2);
-}
+// === Cart Page Behaviour ===
 
 function renderCart() {
   const cart = getCart();
   const container = document.getElementById('cart-items');
-  const subtotalEl = document.getElementById('subtotal');
-  const deliveryEl = document.getElementById('delivery-cost');
-  const totalEl = document.getElementById('total');
   const checkoutBtn = document.getElementById('checkout-btn');
-
+  
   if (cart.length === 0) {
     container.innerHTML = `
       <div class="cart-empty">
-        <p>Your cart is empty.</p>
-        <p style="margin-top:.75rem;"><a href="books.html">Browse our books →</a></p>
-      </div>`;
-    subtotalEl.textContent = fmt(0);
-    deliveryEl.textContent = '—';
-    totalEl.textContent = fmt(0);
+        <h2>Your cart is empty</h2>
+        <p>Browse our collection and add some books</p>
+        <a href="books.html" class="btn btn-primary">Browse Books</a>
+      </div>
+    `;
+    document.getElementById('subtotal').textContent = '£0.00';
+    document.getElementById('delivery').textContent = '—';
+    document.getElementById('total').textContent = '£0.00';
     checkoutBtn.style.pointerEvents = 'none';
     checkoutBtn.style.opacity = '0.5';
     return;
   }
-
-  checkoutBtn.style.pointerEvents = '';
-  checkoutBtn.style.opacity = '';
-
-  const subtotal = cartTotal();
-  const delivery = subtotal >= 30 ? 0 : DELIVERY;
+  
+  // Re-enable checkout button
+  checkoutBtn.style.pointerEvents = 'auto';
+  checkoutBtn.style.opacity = '1';
+  
+  const subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+  const delivery = subtotal >= 30 ? 0 : 2.99;
   const total = subtotal + delivery;
-
-  subtotalEl.textContent = fmt(subtotal);
-  deliveryEl.textContent = delivery === 0 ? 'Free' : fmt(delivery);
-  totalEl.textContent = fmt(total);
-
+  
+  document.getElementById('subtotal').textContent = `£${subtotal.toFixed(2)}`;
+  document.getElementById('delivery').textContent = delivery === 0 ? 'FREE' : `£${delivery.toFixed(2)}`;
+  document.getElementById('total').textContent = `£${total.toFixed(2)}`;
+  
   container.innerHTML = cart.map(item => `
-    <div class="cart-item" data-id="${item.id}">
-      <div class="cart-item-cover" style="background:${item.color};">
-        ${item.title}
+    <div class="cart-item">
+      <div class="cart-item-cover" style="background: ${item.color}">
+        <span>${item.title}</span>
       </div>
       <div class="cart-item-meta">
-        <p class="cart-item-title">${item.title}</p>
-        <p class="cart-item-author">${item.author}</p>
-        <p class="cart-item-price">${fmt(item.price)} each</p>
+        <h3>${item.title}</h3>
+        <p>${item.author}</p>
+        <span class="price-each">£${item.price.toFixed(2)} each</span>
       </div>
       <div class="cart-item-actions">
-        <p class="item-total">${fmt(item.price * item.qty)}</p>
-        <div class="qty-controls" aria-label="Quantity for ${item.title}">
-          <button class="qty-btn" data-action="dec" data-id="${item.id}" aria-label="Decrease quantity">−</button>
-          <span class="qty-display" aria-live="polite">${item.qty}</span>
-          <button class="qty-btn" data-action="inc" data-id="${item.id}" aria-label="Increase quantity">+</button>
+        <span class="item-total">£${(item.price * item.qty).toFixed(2)}</span>
+        
+        <!-- BUG 11: Quantity controls are hidden via CSS, but HTML is still here -->
+        <div class="qty-controls">
+          <button class="qty-btn" data-action="dec" data-id="${item.id}">−</button>
+          <span class="qty-display">${item.qty}</span>
+          <button class="qty-btn" data-action="inc" data-id="${item.id}">+</button>
         </div>
-        <button class="remove-btn" data-id="${item.id}" aria-label="Remove ${item.title} from cart">Remove</button>
+        
+        <button class="remove-btn" data-id="${item.id}">Remove</button>
       </div>
     </div>
   `).join('');
 }
 
-// ---- Event delegation ----
+// Event delegation for cart actions
 document.getElementById('cart-items').addEventListener('click', e => {
-  const removeBtn = e.target.closest('.remove-btn');
-  if (removeBtn) {
-    const id = parseInt(removeBtn.dataset.id, 10);
-    removeFromCart(id);
-    renderCart();
+  // BUG 12: Remove button always deletes the last item, not the clicked one
+  if (e.target.closest('.remove-btn')) {
+    const cart = getCart();
+    if (cart.length > 0) {
+      // Always remove the LAST item in the cart array, ignoring the clicked item
+      const lastItem = cart[cart.length - 1];
+      removeFromCart(lastItem.id);
+      renderCart();
+    }
     return;
   }
-
+  
+  // Quantity controls are hidden anyway (BUG 11), but keep the logic
   const qtyBtn = e.target.closest('.qty-btn');
   if (qtyBtn) {
-    const id = parseInt(qtyBtn.dataset.id, 10);
-    const delta = qtyBtn.dataset.action === 'inc' ? 1 : -1;
-    updateQty(id, delta);
+    const bookId = parseInt(qtyBtn.getAttribute('data-id'));
+    const action = qtyBtn.getAttribute('data-action');
+    const delta = action === 'inc' ? 1 : -1;
+    updateQty(bookId, delta);
     renderCart();
   }
 });
 
-// ---- Init ----
+// Initial render
 updateCartCount();
 renderCart();

@@ -1,69 +1,80 @@
-/* ====================================================
-   cart.js — shared cart utilities (localStorage)
-   ==================================================== */
-
-const CART_KEY = 'folio_cart';
+// === Shared Cart Logic ===
+// Manages cart state in localStorage across all pages
 
 function getCart() {
   try {
-    return JSON.parse(localStorage.getItem(CART_KEY)) || [];
-  } catch {
+    return JSON.parse(localStorage.getItem('folio_cart')) || [];
+  } catch (e) {
     return [];
   }
 }
 
 function saveCart(cart) {
-  localStorage.setItem(CART_KEY, JSON.stringify(cart));
+  localStorage.setItem('folio_cart', JSON.stringify(cart));
 }
 
 function addToCart(book) {
   const cart = getCart();
   const existing = cart.find(item => item.id === book.id);
+  
   if (existing) {
     existing.qty += 1;
   } else {
     cart.push({ ...book, qty: 1 });
   }
+  
   saveCart(cart);
-  updateCartCount();
+  // BUG 1: Cart count never updates - removed updateCartCount() call
+  // updateCartCount();  // This line is commented out!
 }
 
 function removeFromCart(bookId) {
-  const cart = getCart().filter(item => item.id !== bookId);
+  let cart = getCart();
+  cart = cart.filter(item => item.id !== bookId);
   saveCart(cart);
-  updateCartCount();
+  // BUG 1: Cart count never updates
+  // updateCartCount();  // This line is commented out!
 }
 
 function updateQty(bookId, delta) {
   const cart = getCart();
-  const item = cart.find(i => i.id === bookId);
-  if (!item) return;
-  item.qty += delta;
-  if (item.qty <= 0) {
-    saveCart(cart.filter(i => i.id !== bookId));
-  } else {
+  const item = cart.find(item => item.id === bookId);
+  
+  if (item) {
+    item.qty += delta;
+    if (item.qty <= 0) {
+      removeFromCart(bookId);
+      return;
+    }
     saveCart(cart);
+    // BUG 1: Cart count never updates
+    // updateCartCount();  // This line is commented out!
   }
-  updateCartCount();
 }
 
 function cartTotal() {
-  return getCart().reduce((sum, item) => sum + item.price * item.qty, 0);
+  const cart = getCart();
+  return cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
 }
 
 function cartItemCount() {
-  return getCart().reduce((sum, item) => sum + item.qty, 0);
+  const cart = getCart();
+  return cart.reduce((sum, item) => sum + item.qty, 0);
 }
 
+// BUG 1: updateCartCount does nothing - it's been neutered
 function updateCartCount() {
-  const count = cartItemCount();
-  document.querySelectorAll('#cart-count').forEach(el => {
-    el.textContent = count;
-    el.dataset.count = count;
-  });
+  // This function now does nothing, so the cart badge never updates
+  // const count = cartItemCount();
+  // const badges = document.querySelectorAll('#cart-count');
+  // badges.forEach(badge => {
+  //   badge.textContent = count;
+  //   badge.setAttribute('data-count', count);
+  // });
 }
 
 function clearCart() {
-  localStorage.removeItem(CART_KEY);
-  updateCartCount();
+  localStorage.removeItem('folio_cart');
+  // BUG 1: Cart count never updates
+  // updateCartCount();  // This line is commented out!
 }

@@ -1,63 +1,67 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Books — Folio & Co.</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Our Books — Folio & Co.</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
   <nav class="navbar">
-    <a href="index.html" class="nav-logo">Folio <span>&amp;</span> Co.</a>
-    <ul class="nav-links">
-      <li><a href="index.html">Home</a></li>
-      <li><a href="books.html" class="active">Books</a></li>
-      <li><a href="index.html#about">About</a></li>
-    </ul>
-    <a href="cart.html" class="cart-link" aria-label="View cart">
-      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
-      <span class="cart-label">Cart</span>
-      <span class="cart-count" id="cart-count">0</span>
-    </a>
+    <div class="container">
+      <a href="index.html" class="logo">Folio <span>&</span> Co.</a>
+      <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="books.html" class="active">Books</a>
+        <a href="index.html#about">About</a>
+      </div>
+      <!-- BUG 1: Removed "Cart" label -->
+      <a href="cart.html" class="cart-link">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
+          <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+        </svg>
+        <span class="cart-count" id="cart-count" data-count="0">0</span>
+      </a>
+    </div>
   </nav>
 
-  <div class="page-header">
-    <h1>Our Books</h1>
-    <p>Browse our curated collection of titles.</p>
-  </div>
+  <header class="page-header">
+    <div class="container">
+      <h1>Our Books</h1>
+      <p>Browse our carefully curated collection</p>
+    </div>
+  </header>
 
-  <div class="catalogue-controls">
-    <div class="search-wrap">
-      <label for="search-input" class="sr-only">Search by title or author</label>
-      <input
-        type="search"
-        id="search-input"
-        class="search-input"
-        placeholder="Search by title or author…"
-        autocomplete="off"
-      />
-      <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+  <main class="container">
+    <div class="catalogue-controls">
+      <div>
+        <!-- BUG 8: Changed placeholder to "Search books..." (singular, less clear) -->
+        <label for="search-input" class="sr-only">Search books</label>
+        <input type="search" id="search-input" class="search-input" placeholder="Search books...">
+      </div>
+      <div class="genre-filters">
+        <button class="chip active" data-genre="all">All</button>
+        <button class="chip" data-genre="Fiction">Fiction</button>
+        <button class="chip" data-genre="Non-Fiction">Non-Fiction</button>
+        <button class="chip" data-genre="Science">Science</button>
+        <button class="chip" data-genre="History">History</button>
+        <button class="chip" data-genre="Philosophy">Philosophy</button>
+      </div>
     </div>
 
-    <div class="genre-filters" role="group" aria-label="Filter by genre">
-      <button class="chip active" data-genre="all">All</button>
-      <button class="chip" data-genre="Fiction">Fiction</button>
-      <button class="chip" data-genre="Non-Fiction">Non-Fiction</button>
-      <button class="chip" data-genre="Science">Science</button>
-      <button class="chip" data-genre="History">History</button>
-      <button class="chip" data-genre="Philosophy">Philosophy</button>
-    </div>
-  </div>
+    <!-- BUG 4: Result count will never update (fixed at 12) -->
+    <div id="result-count" aria-live="polite">Showing 12 of 12 books</div>
 
-  <div class="result-count" id="result-count" aria-live="polite"></div>
+    <div id="book-grid"></div>
 
-  <div class="book-grid" id="book-grid"></div>
-
-  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    <div id="toast" class="toast"></div>
+  </main>
 
   <footer class="footer">
-    <p>&copy; 2025 Folio &amp; Co. All rights reserved.</p>
+    <div class="container">
+      <p>&copy; 2026 Folio & Co. All rights reserved.</p>
+    </div>
   </footer>
 
   <script src="cart.js"></script>
